@@ -8,13 +8,17 @@
   "typings": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "watch": "tsc-watch --onSuccess 'node /bin/test'",
+    "watch": "tsc-watch --onSuccess 'node ./bin/test'",
     "build": "rm -rf lib && tsc",
     "test": "yarn -s build && node ./bin/test"
   },
   "prepublish": "yarn build",
   "devDependencies": {
+    "@types/node-fetch": "^2.5.9",
     "tsc-watch": "^4.2.9",
     "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
   }
 }
