@@ -1,7 +1,9 @@
+import { Xhr as IXhr } from 'chestre';
 import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 const jsonHeader = {
-  Accept: 'application/json'
+  Accept: 'application/vnd.chest.v1+json'
 };
 
 export const defaultInit: RequestInit = {
@@ -14,8 +16,8 @@ export const xhrHeader = {
 };
 
 
-export class Xhr {
-
+export class Xhr implements IXhr {
+  
   baseUrl: string
   
   constructor(baseUrl: string) {
@@ -23,20 +25,37 @@ export class Xhr {
   }
 
   json(url: string, init: RequestInit = {}): Promise<any> {
+    let { headers, ...rest } = init;
+    
     return fetch(this.baseUrl + url, {
       ...defaultInit,
       headers: {
         ...jsonHeader,
-        ...xhrHeader
+        ...xhrHeader,
+        ...headers
       },
-      ...init
+      ...rest
     } as any).then(res => {
       if (res.ok) return res.json();
-      throw res.status;
+      return res.json()
+        .then(_ => { throw _});
     });
   }
     
-  form(data: any): string {
-    return JSON.stringify(data);
+  form(data: any): any {
+    const form = new FormData();
+    for (let key in data) {
+      form.append(key, data[key]);
+    }
+    return form;
+  }
+
+  headers(url: string) {
+    return fetch(this.baseUrl + url, {
+      redirect: 'manual'
+    })
+      .then(_ => {
+        return _.headers.raw();
+      });
   }
 }
