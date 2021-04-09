@@ -18,6 +18,7 @@ test('foo', async t => {
 
   let bs1 = await bu1.books(),
   bs2 = await bu2.books();
-  t.is(bs1, bs2);
-    
+  t.deepEqual(bs1, bs2);
+  t.like(bs1?.[0], { name: 'hello' });
+  
 });
